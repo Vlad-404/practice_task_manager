@@ -76,7 +76,6 @@ def login():
             flash("Incorrect Username and/or Password")
             return redirect(url_for("login"))
 
-
     return render_template("login.html")
 
 
@@ -92,12 +91,12 @@ def profile(username):
     return redirect(url_for("login"))
 
 
-@app.route("/logout") # not using methods as "GET" is default one
+@app.route("/logout")  # not using methods as "GET" is default one
 def logout():
     flash("You have been logged out")
     # one method is removing all session cookies applicable for our app:
     # session.clear()
-    #other is removing a cookie related to the current user:
+    # other is removing a cookie related to the current user:
     session.pop("user")
     return redirect(url_for("login"))
 
@@ -119,6 +118,14 @@ def add_task():
         return redirect(url_for("get_tasks"))
     categories = mongo.db.categories.find().sort("category_name", 1)
     return render_template("add_task.html", categories=categories)
+
+
+@app.route("/edit_task/<task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
+    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("edit_task.html", task=task, categories=categories)
 
 
 if __name__ == "__main__":
